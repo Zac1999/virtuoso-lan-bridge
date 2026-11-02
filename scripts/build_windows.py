@@ -22,7 +22,7 @@ def main():
                         "--distpath", str(root / "dist"), "--workpath", str(root / "build"),
                         "--specpath", str(root / "build"), str(root / (role + "_app.py"))], check=True)
         folder = root / "dist" / name
-        for file in ("README.md", "LICENSE", "NOTICE.md", "VALIDATION.md"):
+        for file in ("README.md", "README.en.md", "LICENSE", "NOTICE.md", "VALIDATION.md", "VALIDATION.zh-CN.md"):
             shutil.copy2(root / file, folder / file)
         shutil.copytree(root / "examples", folder / "examples", dirs_exist_ok=True)
         shutil.copytree(root / "src/virtuoso_lan_bridge/virtuoso", folder / "virtuoso", dirs_exist_ok=True)

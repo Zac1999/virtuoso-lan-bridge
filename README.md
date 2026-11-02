@@ -1,5 +1,7 @@
 # Virtuoso LAN Bridge
 
+**简体中文** | [English](README.en.md)
+
 两台 Windows 电脑，各运行一个程序，让本机 VM 与另一台电脑的 VM 一起参与 Cadence 仿真。
 也可添加可直接 SSH 访问的 Linux 服务器。
 
@@ -128,8 +130,6 @@ python -m venv .venv
 
 构建输出为两个独立 onedir ZIP，每个包含 EXE、`_internal`、示例和许可证。打包必须在 Windows 上运行。CI 在 Windows/Linux 上测试，并在 Windows 上构建两个程序。
 
-`NOTICE.md` 记录兼容 Bridge 的上游来源与许可证。项目没有附带商业软件、PDK、许可证文件、私人设计或 SSH 私钥。
+实测结果和验证范围见[中文验证说明](VALIDATION.zh-CN.md)；也可查看 [English verification report](VALIDATION.md)。
 
-## English overview
-
-Two Windows applications share one Python package: a controller manages compute nodes and dispatches independent Spectre netlist jobs; a node app starts its local VMware VM, bootstraps SSH public keys, optionally installs a loopback-only RAMIC Bridge, and configures source-restricted Windows SSH forwarding. Direct Linux servers are supported. Runtime state stays outside the application directory. Pin host keys before pairing. An ambiguous submission is never retried automatically. This is not a transparent multi-host solver for one transient analysis, nor an ADE/OA project synchronizer.
+[`NOTICE.md`](NOTICE.md) 记录兼容 Bridge 的上游来源与许可证。项目没有附带商业软件、PDK、许可证文件、私人设计或 SSH 私钥。

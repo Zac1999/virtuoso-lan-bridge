@@ -1,5 +1,7 @@
 # v0.1.0 verification
 
+[简体中文](VALIDATION.zh-CN.md) | **English** · [User guide](README.en.md)
+
 Verified on 2026-11-02 before the initial release:
 
 | Check | Result |
