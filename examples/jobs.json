@@ -1,0 +1,6 @@
+{
+  "jobs": [
+    {"name": "rc-fast", "bundle": "rc-fast", "entry": "input.scs", "timeout_seconds": 60},
+    {"name": "rc-slow", "bundle": "rc-slow", "entry": "input.scs", "timeout_seconds": 60}
+  ]
+}

@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "virtuoso-lan-bridge"
+version = "0.1.0"
+description = "Controller and node applications for VMware-hosted Virtuoso and Spectre over LAN SSH"
+requires-python = ">=3.10"
+license = "MIT"
+readme = "README.md"
+authors = [{name = "virtuoso-lan-bridge contributors"}]
+dependencies = []
+
+[project.scripts]
+vlb-controller = "virtuoso_lan_bridge.cli:controller_main"
+vlb-node = "virtuoso_lan_bridge.cli:node_main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+virtuoso_lan_bridge = ["vendor/*", "virtuoso/*.il", "runner/worker.py", "windows_forward.ps1"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
