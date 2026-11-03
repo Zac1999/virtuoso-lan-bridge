@@ -25,6 +25,8 @@ def main():
         for file in ("README.md", "README.en.md", "LICENSE", "NOTICE.md", "VALIDATION.md", "VALIDATION.zh-CN.md"):
             shutil.copy2(root / file, folder / file)
         shutil.copytree(root / "examples", folder / "examples", dirs_exist_ok=True)
+        scripts = folder / "scripts"; scripts.mkdir(exist_ok=True)
+        shutil.copy2(root / "scripts/install_desktop.ps1", scripts / "install_desktop.ps1")
         shutil.copytree(root / "src/virtuoso_lan_bridge/virtuoso", folder / "virtuoso", dirs_exist_ok=True)
         licenses = folder / "licenses"; licenses.mkdir(exist_ok=True)
         python_license = Path(sys.base_prefix) / "LICENSE.txt"

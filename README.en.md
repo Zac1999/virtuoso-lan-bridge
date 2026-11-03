@@ -14,7 +14,7 @@ Download the appropriate Windows x64 ZIP from [Releases](https://github.com/jian
 
 This independent connection and scheduling tool is compatible with [virtuoso-bridge-lite](https://github.com/Arcadia-1/virtuoso-bridge-lite) and [virtuoso-wiki-bridge](https://github.com/jianshengchuanchaun/virtuoso-wiki-bridge). You can reuse an existing Bridge installation.
 
-The v0.1.0 desktop interface uses Chinese labels. This guide includes the relevant labels alongside their English meanings so you can follow the same workflow. Documentation language selection does not change the application's interface language.
+The desktop interface uses Chinese labels. This guide includes the relevant labels alongside their English meanings so you can follow the same workflow. Documentation language selection does not change the application's interface language; the quickstart report displays both languages.
 
 ## Features
 
@@ -51,6 +51,27 @@ The application starts existing `.vmx` files. It does not install operating syst
 **Linux servers:** Spectre jobs do not require VMware or a graphical Bridge. On a Windows node application that can reach the server, enter the server's IP and username, select direct connection, and follow the same pairing workflow. Alternatively, use the source-based `vlb-node` CLI. Without a graphical session, a failed Bridge check does not prevent independent Spectre jobs, but the Virtuoso GUI is not connected.
 
 For later use, normally start each computer's VM, start Virtuoso if needed, and check the nodes from the controller. Update settings and forwarding when IP addresses change. An existing node ID cannot silently switch to a different SSH endpoint.
+
+## Double-click desktop workflow
+
+After pairing, v0.2.0 can save a workflow profile and install desktop shortcuts. The controller checks every required node, dispatches independent Spectre jobs, collects hash-verified artifacts, and opens a bilingual HTML report. Every required node must pass; an offline node does not cause a silent fallback to one machine.
+
+1. Copy `examples/quickstart.profile.json` into your configuration directory. Set the paired `controller_state`, `required_nodes`, job manifest `jobs`, and output parent `results_root`. Relative paths resolve from the profile directory. Enabled pool nodes must exactly match `required_nodes`; concurrency and job counts must each be at least the number of required nodes.
+2. Optionally set `local_vmx` and `local_node` to start or reuse the controller computer's VM. The other physical computer must already be powered on, with its VM and SSH entry available. Graphical Virtuoso / Bridge must already be running; the launcher does not guess design directories or open a second design session.
+3. In the extracted controller directory, run once:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\install_desktop.ps1 -Profile C:\MyConfig\quickstart.json
+```
+
+The installer creates **Virtuoso 双机联动仿真** (run saved multi-node jobs), **Virtuoso 连接检查** (connection check only), and **Virtuoso 仿真控制台** (the paired GUI). Connection check mode neither starts a VM nor submits jobs. Shortcuts reuse existing SSH identities and trusted host keys; existing shortcuts with the same names are backed up.
+
+The default RC manifest verifies dispatch and collection; it **does not read the circuit currently open in ADE**. Export netlist bundles and change `jobs` for your designs. Each launch creates a fresh result directory. An OS lock prevents repeated double-click submissions. An unresolved previous job retains the scheduler lock and requires inspection of the original batch. By default, existing Spectre/HSPICE processes also prevent dispatch; that check is a startup snapshot, not a cross-application resource scheduler.
+
+```powershell
+.\Virtuoso-LAN-Controller.exe quickstart --profile C:\MyConfig\quickstart.json --check-only --open-report
+.\Virtuoso-LAN-Controller.exe quickstart --profile C:\MyConfig\quickstart.json --open-report
+```
 
 ## Loading the entry scripts in both Virtuoso sessions
 

@@ -1,6 +1,17 @@
-# v0.1.0 verification
+# Verification
 
 [简体中文](VALIDATION.zh-CN.md) | **English** · [User guide](README.en.md)
+
+## v0.2.0 desktop workflow (2026-11-03)
+
+- Windows automated tests: 69 passed, with one Linux-only integration test skipped. New coverage includes double-click locking, all-node preflight failure, preservation of an earlier UNKNOWN lock, check-only mode, configuration changes after checking, native-log/distribution/collection success requirements, separate result directories, and HTML escaping.
+- Both Windows EXEs built successfully; CLI help and native Tk widget creation passed. The shortcut installer was executed with Windows PowerShell 5.1 and its shortcut targets and arguments were read back.
+- The current local VM passed SSH, Spectre version, and Bridge `1+2=3` checks. The launcher recognized the already-running local VM.
+- The current second computer's SSH entry timed out; network probes did not confirm reachability. The new packaged workflow returned `PREFLIGHT_FAILED`, saved its report, and dispatched no simulations.
+
+The new workflow's live two-node success path therefore remains to be retested after the second computer becomes reachable. The v0.1.0 two-node RC evidence below is historical and does not establish current connectivity or a successful run in this session. No speedup was measured; automatic graphical Virtuoso recovery after cold boot remains unverified.
+
+## v0.1.0 initial release
 
 Verified on 2026-11-02 before the initial release:
 

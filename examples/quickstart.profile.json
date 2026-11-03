@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "controller_state": "C:/Users/YOUR_USER/AppData/Local/VirtuosoLANBridge/controller",
+  "required_nodes": ["local-vm", "desktop-vm"],
+  "jobs": "jobs.json",
+  "results_root": "C:/Users/YOUR_USER/Documents/VirtuosoLANRuns",
+  "require_bridge": true,
+  "stop_if_simulator_busy": true,
+  "local_vmx": "",
+  "local_node": "local-vm"
+}

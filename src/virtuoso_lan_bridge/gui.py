@@ -17,7 +17,7 @@ from .runner import controller as runner
 
 
 class App:
-    def __init__(self, role):
+    def __init__(self, role, controller_root=None):
         self.root = tk.Tk()
         self.root.title(f"Virtuoso LAN Bridge {__version__} · " + ("母端 / Controller" if role == "controller" else "子端 / Node"))
         self.root.geometry("1060x850")
@@ -26,7 +26,7 @@ class App:
         self.queue = queue.Queue()
         self.busy = False
         self.role = role
-        self.controller = Controller() if role == "controller" else None
+        self.controller = Controller(controller_root) if role == "controller" else None
         style = ttk.Style(self.root)
         if "vista" in style.theme_names():
             style.theme_use("vista")
@@ -370,9 +370,9 @@ class NodePanel:
         self.task("启动 Virtuoso", lambda c, r: node.start_virtuoso(c, node.local_node(c, self.directory)))
 
 
-def launch(role):
+def launch(role, controller_root=None):
     if sys.platform == "win32" and getattr(sys, "frozen", False):
         import ctypes
         window = ctypes.windll.kernel32.GetConsoleWindow()
         if window: ctypes.windll.user32.ShowWindow(window, 0)
-    App(role).root.mainloop()
+    App(role, controller_root).root.mainloop()

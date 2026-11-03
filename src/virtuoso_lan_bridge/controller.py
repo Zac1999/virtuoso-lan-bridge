@@ -102,8 +102,10 @@ class Controller:
         node["enabled"] = bool(enabled)
         write_json(self.pool_path, cfg)
 
-    def run(self, jobs, batch):
+    def run(self, jobs, batch, *, expected_config=None):
         cfg = runner.load_config(self.pool_path)
+        if expected_config is not None and cfg != expected_config:
+            raise RuntimeError("节点配置在检查后发生变化，请重新检查后启动。")
         requests = runner.prepare_jobs(jobs)
         if Path(batch).exists():
             raise ValueError("批次目录已存在，请选择新目录")

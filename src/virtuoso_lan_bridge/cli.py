@@ -22,6 +22,11 @@ def controller_main(argv=None):
     p = argparse.ArgumentParser(description="Virtuoso LAN Bridge 母端")
     p.add_argument("--state", type=Path)
     s = p.add_subparsers(dest="action", required=True)
+    s.add_parser("gui")
+    q = s.add_parser("quickstart", help="Check all nodes, run the saved jobs, and collect verified results")
+    q.add_argument("--profile", type=Path, required=True)
+    q.add_argument("--check-only", action="store_true")
+    q.add_argument("--open-report", action="store_true")
     q = s.add_parser("pair"); q.add_argument("--ip", required=True); q.add_argument("--output", required=True)
     q = s.add_parser("import-node"); q.add_argument("card")
     s.add_parser("nodes")
@@ -33,6 +38,15 @@ def controller_main(argv=None):
     q = s.add_parser("cancel"); q.add_argument("batch"); q.add_argument("job")
     q = s.add_parser("start-vm"); q.add_argument("vmx"); q.add_argument("--vmrun")
     a = p.parse_args(argv)
+    if a.action == "gui":
+        from .gui import launch
+        launch("controller", a.state)
+        return 0
+    if a.action == "quickstart":
+        from .quickstart import run_profile
+        result = run_profile(a.profile, check_only=a.check_only, open_report=a.open_report)
+        _print({k: result[k] for k in ("status", "report", "message")})
+        return 0 if result["status"] in {"SUCCEEDED", "READY"} else 2
     c = Controller(a.state)
     if a.action == "pair": result = c.pairing(a.ip, a.output)
     elif a.action == "import-node": result = c.import_card(a.card)

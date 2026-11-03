@@ -50,6 +50,27 @@ Windows 电脑已开机并安装 VMware Workstation 和 OpenSSH Client。Linux V
 
 以后通常只需两端各点击启动 VM、必要时启动 Virtuoso，再在母端检测节点。地址变更后须更新配置与转发，不能依赖过期的 IP。相同节点 ID 不允许悄悄换成另一个 SSH 入口。
 
+## 桌面双击联动
+
+完成配对后，v0.2.0 可保存一份联动配置并安装桌面快捷方式。母端双击后会检查所有指定节点，分发独立的 Spectre 任务，取回经过哈希校验的结果，并自动打开中英双语 HTML 报告。两端必须都通过检查；节点离线时不会退回单机执行。
+
+1. 复制 `examples/quickstart.profile.json` 到自己的配置目录，填写已配对的 `controller_state`、`required_nodes`、任务清单 `jobs` 和结果父目录 `results_root`。相对路径从配置文件所在目录解析。节点池中启用的节点应与 `required_nodes` 完全一致，并发数和任务数均不得小于节点数。
+2. 可选填写本机 `local_vmx` 与 `local_node`，启动时复用或启动该 VM。另一台物理电脑需已开机，VM 和 SSH 转发入口需就绪。图形 Virtuoso / Bridge 仍需已启动；程序不会猜测设计目录或自动打开另一份设计会话。
+3. 在解压后的母端目录运行一次：
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\install_desktop.ps1 -Profile C:\MyConfig\quickstart.json
+```
+
+桌面生成三个入口：**Virtuoso 双机联动仿真**、**Virtuoso 连接检查**、**Virtuoso 仿真控制台**。前者运行保存的清单；第二个只读检查连接，不启动 VM、不提交仿真；第三个打开同一套配对配置的图形界面。程序使用原有 SSH 密钥和主机信任配置，不重新配对。已有同名快捷方式会先备份。
+
+默认 RC 清单用于验证多节点分发，**不会读取当前 ADE 中的电路**。要跑实际电路，请导出网表 bundle 后修改 `jobs`。每次运行创建新的结果目录；重复双击由运行锁拦截。若上次任务状态未知，调度锁保留，需要先查询原批次。默认检查到已有 Spectre/HSPICE 进程也会暂停本次派发。此进程检查是启动时快照，不能代替跨软件的资源调度。
+
+```powershell
+.\Virtuoso-LAN-Controller.exe quickstart --profile C:\MyConfig\quickstart.json --check-only --open-report
+.\Virtuoso-LAN-Controller.exe quickstart --profile C:\MyConfig\quickstart.json --open-report
+```
+
 ## 在两台 Virtuoso 中加载
 
 下载包还包含两个直接供 **Virtuoso CIW** 加载的 SKILL 入口：
