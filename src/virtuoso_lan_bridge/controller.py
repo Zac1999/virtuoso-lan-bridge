@@ -45,7 +45,7 @@ class Controller:
         port(node["bridge_port"])
         # Only schema-approved fields cross into a command configuration; do not accept executable/SSH overrides.
         allowed = {"name", "label", "host", "port", "user", "bridge_port", "spectre", "environment", "slots", "threads",
-                   "root", "python", "spectre_args", "required_files"}
+                   "root", "python", "spectre_args", "required_files", "bridge_token"}
         if set(node) - allowed:
             raise ValueError("节点卡含未知配置字段")
         node = dict(node, enabled=True, ssh=executable("ssh"), identity_file=str(self.key))

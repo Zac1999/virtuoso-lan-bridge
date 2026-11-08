@@ -118,12 +118,43 @@ def tunnel(node, remote_port):
                 proc.wait(timeout=5)
 
 
+def _frame(*parts):
+    out = bytearray()
+    for part in parts:
+        if isinstance(part, str):
+            part = part.encode("utf-8")
+        out += str(len(part)).encode("ascii") + b":" + part
+    return bytes(out)
+
+
+def _request_mac(token, request):
+    import hashlib
+    import hmac as _hmac
+
+    msg = _frame(
+        "vb1-request",
+        "1",
+        str(request["nonce"]),
+        "%.6f" % float(request["timeout"]),
+        request["skill"],
+    )
+    return _hmac.new(token.encode("utf-8"), msg, hashlib.sha256).hexdigest()
+
+
 def skill(node, expression="1+2", timeout=15):
     """RAMIC-compatible protocol over a pinned SSH tunnel. No automatic retries."""
     with tunnel(node, node["bridge_port"]) as local_port:
         with socket.create_connection(("127.0.0.1", local_port), timeout=timeout) as sock:
             sock.settimeout(timeout)
-            sock.sendall(json.dumps({"skill": expression, "timeout": timeout}).encode("utf-8"))
+            request = {"skill": expression, "timeout": timeout}
+            token = (node.get("bridge_token") or "").strip()
+            if token:
+                import secrets
+
+                request["proto"] = 1
+                request["nonce"] = secrets.token_hex(16)
+                request["mac"] = _request_mac(token, request)
+            sock.sendall(json.dumps(request).encode("utf-8"))
             sock.shutdown(socket.SHUT_WR)
             chunks, size = [], 0
             while True:
@@ -137,4 +168,13 @@ def skill(node, expression="1+2", timeout=15):
     raw = b"".join(chunks).decode("utf-8", "replace")
     if not raw.startswith("\x02"):
         raise RuntimeError("SKILL 未返回成功标记：" + raw.lstrip("\x15")[:2000])
-    return {"status": "success", "output": raw[1:].strip(), "errors": []}
+    body = raw[1:]
+    # 带 token 的 daemon 响应为 \x02 + 64hex MAC + JSON 正文
+    if len(body) > 64 and all(c in "0123456789abcdef" for c in body[:64].lower()):
+        body = body[64:]
+    try:
+        payload = json.loads(body)
+        output = str(payload.get("output", body)).strip().strip('"')
+    except (ValueError, AttributeError):
+        output = body.strip()
+    return {"status": "success", "output": output, "errors": []}
